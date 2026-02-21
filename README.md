@@ -225,6 +225,16 @@ To get a High ID, all of the following must be true:
      - "4665:4665/udp"   # ED2K global search (AMULE_PORT + 3)
      - "4672:4672/udp"   # ED2K/Kad UDP (AMULE_UDP_PORT)
    ```
+   For example, if you set `AMULE_PORT=5000`, you must also update the port mappings so they stay consistent with the new value and its related ports:
+   ```yaml
+   environment:
+     - AMULE_PORT=5000
+     - AMULE_UDP_PORT=4672
+   ports:
+     - "5000:5000"       # ED2K TCP (AMULE_PORT)
+     - "5003:5003/udp"   # ED2K global search (AMULE_PORT + 3)
+     - "4672:4672/udp"   # ED2K/Kad UDP (AMULE_UDP_PORT)
+   ```
 
 4. **No firewall blocking**: Ensure no host firewall (iptables, firewalld, Synology Firewall) is blocking the forwarded ports.
 

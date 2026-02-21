@@ -367,10 +367,10 @@ fi
 
 # Replace ports if environment variables are set
 if [ -n "${AMULE_PORT}" ]; then
-    sed -i "s/^Port=.*/Port=${AMULE_PORT_TCP}/" "${AMULE_CONF}"
+    sed -i '/^\[eMule\]/,/^\[.*\]/ s/^Port=.*/Port='"${AMULE_PORT_TCP}"'/' "${AMULE_CONF}"
 fi
 if [ -n "${AMULE_UDP_PORT}" ]; then
-    sed -i "s/^UDPPort=.*/UDPPort=${AMULE_PORT_UDP}/" "${AMULE_CONF}"
+    sed -i '/^\[eMule\]/,/^\[.*\]/ s/^UDPPort=.*/UDPPort='"${AMULE_PORT_UDP}"'/' "${AMULE_CONF}"
 fi
 
 # Set permissions
