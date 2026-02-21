@@ -3,7 +3,8 @@ FROM alpine:3.22.2 AS builder
 WORKDIR /tmp
 
 # Install aMule
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing amule amule-doc
+RUN apk upgrade --no-cache && \
+    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing amule amule-doc
 
 # Install a modern Web UI
 RUN AMULEWEBUI_RELOADED_COMMIT=704ae1c861561513c010353320bb1ca9f0f2b9fe && \
@@ -17,8 +18,9 @@ FROM alpine:3.22.2
 
 LABEL maintainer="ngosang@hotmail.es"
 
-# Install packages
-RUN apk add --no-cache libedit libgcc libintl libpng libstdc++ libupnp musl wxwidgets zlib tzdata pwgen mandoc curl && \
+# Install packages and security updates
+RUN apk upgrade --no-cache && \
+    apk add --no-cache libedit libgcc libintl libpng libstdc++ libupnp musl wxwidgets zlib tzdata pwgen mandoc curl && \
     apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing crypto++
 
 # Copy binaries and Man doc
