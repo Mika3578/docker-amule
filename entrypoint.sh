@@ -87,6 +87,8 @@ AMULE_HOME=/home/amule/.aMule
 AMULE_CONF=${AMULE_HOME}/amule.conf
 REMOTE_CONF=${AMULE_HOME}/remote.conf
 KAD_NODES_DAT_URL="http://upd.emule-security.org/nodes.dat"
+AMULE_PORT_TCP=${AMULE_PORT:-4662}
+AMULE_PORT_UDP=${AMULE_UDP_PORT:-4672}
 
 # Create configuration files if don't exist
 AMULE_GROUP="amule"
@@ -151,8 +153,8 @@ QueueSizePref=50
 MaxUpload=0
 MaxDownload=0
 SlotAllocation=50
-Port=4662
-UDPPort=4672
+Port=${AMULE_PORT_TCP}
+UDPPort=${AMULE_PORT_UDP}
 UDPEnable=1
 Address=
 Autoconnect=1
@@ -361,6 +363,14 @@ fi
 if [ -n "${WEBUI_PWD}" ]; then
     sed -i "s/^Password=.*/Password=${AMULE_WEBUI_ENCODED_PWD}/" "${AMULE_CONF}"
     sed -i "s/^AdminPassword=.*/AdminPassword=${AMULE_WEBUI_ENCODED_PWD}/" "${REMOTE_CONF}"
+fi
+
+# Replace ports if environment variables are set
+if [ -n "${AMULE_PORT}" ]; then
+    sed -i "s/^Port=.*/Port=${AMULE_PORT_TCP}/" "${AMULE_CONF}"
+fi
+if [ -n "${AMULE_UDP_PORT}" ]; then
+    sed -i "s/^UDPPort=.*/UDPPort=${AMULE_PORT_UDP}/" "${AMULE_CONF}"
 fi
 
 # Set permissions

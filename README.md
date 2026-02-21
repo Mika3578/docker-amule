@@ -74,12 +74,14 @@ services:
       - MOD_AUTO_SHARE_DIRECTORIES=/incoming;/my_movies
       - MOD_FIX_KAD_GRAPH_ENABLED=true
       - MOD_FIX_KAD_BOOTSTRAP_ENABLED=true
+      # - AMULE_PORT=4662
+      # - AMULE_UDP_PORT=4672
     ports:
       - "4711:4711" # web ui
       - "4712:4712" # remote gui, webserver, cmd ...
-      - "4662:4662" # ed2k tcp
-      - "4665:4665/udp" # ed2k global search udp (tcp port +3)
-      - "4672:4672/udp" # ed2k udp
+      - "4662:4662" # ed2k tcp (must match AMULE_PORT, open to internet for High ID)
+      - "4665:4665/udp" # ed2k global search udp (AMULE_PORT +3, open to internet for High ID)
+      - "4672:4672/udp" # ed2k udp (must match AMULE_UDP_PORT, open to internet for High ID)
     volumes:
       - <fill_amule_configuration_path>:/home/amule/.aMule
       - <fill_amule_completed_downloads_path>:/incoming
@@ -108,6 +110,8 @@ docker run -d \
   -e MOD_AUTO_SHARE_DIRECTORIES=/incoming;/my_movies `#optional` \
   -e MOD_FIX_KAD_GRAPH_ENABLED=true `#optional` \
   -e MOD_FIX_KAD_BOOTSTRAP_ENABLED=true `#optional` \
+  -e AMULE_PORT=4662 `#optional` \
+  -e AMULE_UDP_PORT=4672 `#optional` \
   -v <fill_amule_configuration_path>:/home/amule/.aMule \
   -v <fill_amule_completed_downloads_path>:/incoming \
   -v <fill_amule_incomplete_downloads_path>:/temp \
@@ -123,9 +127,9 @@ Container images are configured using parameters passed at runtime (such as thos
 | :----: | --- |
 | `-p 4711` | Web UI port. |
 | `-p 4712` | Remote gui, webserver, cmd port. |
-| `-p 4662` | ED2K TCP port (must be open to Internet). |
-| `-p 4665/udp` | ED2K global search UDP port (tcp port +3) (must be open to Internet). |
-| `-p 4672/udp` | ED2K UDP port (must be open to Internet). |
+| `-p 4662` | ED2K TCP port (must match `AMULE_PORT`, must be open to Internet). |
+| `-p 4665/udp` | ED2K global search UDP port (`AMULE_PORT` +3) (must be open to Internet). |
+| `-p 4672/udp` | ED2K UDP port (must match `AMULE_UDP_PORT`, must be open to Internet). |
 | `-e PUID=1000` | for UserID - see below for explanation. |
 | `-e PGID=1000` | for GroupID - see below for explanation. |
 | `-e TZ=Europe/London` | Specify a timezone to use EG Europe/London. |
@@ -137,6 +141,8 @@ Container images are configured using parameters passed at runtime (such as thos
 | `-e MOD_AUTO_SHARE_DIRECTORIES=/incoming;/my_movies` | aMule auto share directories with subdirectories. Check modifications section. |
 | `-e MOD_FIX_KAD_GRAPH_ENABLED=true` | Fix Kad stats graph bug. Check modifications section. |
 | `-e MOD_FIX_KAD_BOOTSTRAP_ENABLED=true` | Fix Kad bootstrap bug. Check modifications section. |
+| `-e AMULE_PORT=4662` | Set ED2K TCP port. It will overwrite the port in the config file. Default is 4662. |
+| `-e AMULE_UDP_PORT=4672` | Set ED2K/Kad UDP port. It will overwrite the port in the config file. Default is 4672. |
 | `-v /home/amule/.aMule` | Path to save aMule configuration. |
 | `-v /incoming` | Path to completed torrents. |
 | `-v /temp` | Path to incomplete torrents. |
@@ -195,3 +201,32 @@ aMule [does not download the nodes.dat file](https://github.com/ngosang/docker-a
 
 As workaround, we are downloading the `nodes.dat` file before starting aMule. The file is only downloaded if it has not been downloaded before.
 * `MOD_FIX_KAD_BOOTSTRAP_ENABLED=true`
+
+## Troubleshooting: High ID with Docker Bridge Networking
+
+When running aMule inside a Docker container with bridge networking (the default), you may get a Low ID or see Kad as "Firewalled". This is commonly reported on Synology NAS with DSM 7.x but can affect any Docker bridge setup.
+
+To get a High ID, all of the following must be true:
+
+1. **Port forwarding on your router**: Forward the ED2K ports from the internet to your Docker host's IP:
+   * `AMULE_PORT` TCP (default: 4662)
+   * `AMULE_PORT + 3` UDP (default: 4665) — ED2K global search
+   * `AMULE_UDP_PORT` UDP (default: 4672) — ED2K/Kad
+
+2. **Docker port mappings must match aMule's configured ports**: The container-side ports in your Docker port mappings (`-p` flags) must match the ports aMule is configured to use. For example, if you set `AMULE_PORT=4662`, use `-p 4662:4662`. Avoid mapping different external and internal ports (e.g., `-p 5000:4662` will not work for High ID).
+
+3. **Use `AMULE_PORT` and `AMULE_UDP_PORT` environment variables** to change ports without manually editing `amule.conf`:
+   ```yaml
+   environment:
+     - AMULE_PORT=4662
+     - AMULE_UDP_PORT=4672
+   ports:
+     - "4662:4662"       # ED2K TCP (AMULE_PORT)
+     - "4665:4665/udp"   # ED2K global search (AMULE_PORT + 3)
+     - "4672:4672/udp"   # ED2K/Kad UDP (AMULE_UDP_PORT)
+   ```
+
+4. **No firewall blocking**: Ensure no host firewall (iptables, firewalld, Synology Firewall) is blocking the forwarded ports.
+
+> [!NOTE]
+> UPnP does not work through Docker bridge networking. You must configure static port forwarding on your router manually.

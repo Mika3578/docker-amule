@@ -15,12 +15,14 @@ services:
       - MOD_AUTO_SHARE_DIRECTORIES=/incoming;/my_movies
       - MOD_FIX_KAD_GRAPH_ENABLED=true
       - MOD_FIX_KAD_BOOTSTRAP_ENABLED=true
+      # - AMULE_PORT=4662
+      # - AMULE_UDP_PORT=4672
     ports:
       - "4711:4711" # web ui
       - "4712:4712" # remote gui, webserver, cmd ...
-      - "4662:4662" # ed2k tcp
-      - "4665:4665/udp" # ed2k global search udp (tcp port +3)
-      - "4672:4672/udp" # ed2k udp
+      - "4662:4662" # ed2k tcp (must match AMULE_PORT, open to internet for High ID)
+      - "4665:4665/udp" # ed2k global search udp (AMULE_PORT +3, open to internet for High ID)
+      - "4672:4672/udp" # ed2k udp (must match AMULE_UDP_PORT, open to internet for High ID)
     volumes:
       - <fill_amule_configuration_path>:/home/amule/.aMule
       - <fill_amule_completed_downloads_path>:/incoming
