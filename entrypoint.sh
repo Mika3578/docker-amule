@@ -383,6 +383,16 @@ mod_auto_restart
 mod_fix_kad_graph
 mod_fix_kad_bootstrap
 
+# Log effective port configuration to help verify Docker port mappings
+AMULE_SEARCH_PORT_UDP=$((AMULE_PORT_TCP + 3))
+printf "Effective port configuration:\n"
+printf "  ED2K TCP:               %s (Port)\n" "${AMULE_PORT_TCP}"
+printf "  ED2K Global Search UDP: %s (Port + 3, auto-derived)\n" "${AMULE_SEARCH_PORT_UDP}"
+printf "  Kad/ED2K UDP:           %s (UDPPort)\n" "${AMULE_PORT_UDP}"
+printf "  WebUI TCP:              4711\n"
+printf "  EC (Remote GUI) TCP:    4712\n"
+printf "Ensure your Docker port mappings (-p) and router port forwarding match these ports.\n"
+
 # Start aMule
 while true; do
     mod_auto_share
