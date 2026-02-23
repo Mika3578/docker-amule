@@ -21,6 +21,7 @@ services:
       - "4711:4711" # web ui
       - "4712:4712" # remote gui, webserver, cmd ...
       - "4662:4662" # ed2k tcp (must match AMULE_PORT, open to internet for High ID)
+      - "4662:4662/udp" # ed2k udp (must match AMULE_PORT, needed by Emulerr)
       - "4665:4665/udp" # ed2k global search udp (AMULE_PORT +3, open to internet for High ID)
       - "4672:4672/udp" # ed2k udp (must match AMULE_UDP_PORT, open to internet for High ID)
     volumes:

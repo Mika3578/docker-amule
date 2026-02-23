@@ -387,6 +387,7 @@ mod_fix_kad_bootstrap
 AMULE_SEARCH_PORT_UDP=$((AMULE_PORT_TCP + 3))
 printf "Effective port configuration:\n"
 printf "  ED2K TCP:               %s (Port)\n" "${AMULE_PORT_TCP}"
+printf "  ED2K UDP:               %s (Port, needed by Emulerr)\n" "${AMULE_PORT_TCP}"
 printf "  ED2K Global Search UDP: %s (Port + 3, auto-derived)\n" "${AMULE_SEARCH_PORT_UDP}"
 printf "  Kad/ED2K UDP:           %s (UDPPort)\n" "${AMULE_PORT_UDP}"
 printf "  WebUI TCP:              4711\n"

@@ -42,6 +42,7 @@ The web interface is at: `<your-ip>:4711`
 For better download speed you have to open these ports:
 
 * 4662 TCP
+* 4662 UDP (needed by Emulerr)
 * 4665 UDP
 * 4672 UDP
 
@@ -80,6 +81,7 @@ services:
       - "4711:4711" # web ui
       - "4712:4712" # remote gui, webserver, cmd ...
       - "4662:4662" # ed2k tcp (must match AMULE_PORT, open to internet for High ID)
+      - "4662:4662/udp" # ed2k udp (must match AMULE_PORT, needed by Emulerr)
       - "4665:4665/udp" # ed2k global search udp (AMULE_PORT +3, open to internet for High ID)
       - "4672:4672/udp" # ed2k udp (must match AMULE_UDP_PORT, open to internet for High ID)
     volumes:
@@ -97,6 +99,7 @@ docker run -d \
   -p 4711:4711 \
   -p 4712:4712 \
   -p 4662:4662 \
+  -p 4662:4662/udp \
   -p 4665:4665/udp \
   -p 4672:4672/udp \
   -e PUID=1000 \
@@ -128,6 +131,7 @@ Container images are configured using parameters passed at runtime (such as thos
 | `-p 4711` | Web UI port. |
 | `-p 4712` | Remote gui, webserver, cmd port. |
 | `-p 4662` | ED2K TCP port (must match `AMULE_PORT`, must be open to Internet). |
+| `-p 4662/udp` | ED2K UDP port (must match `AMULE_PORT`, needed by Emulerr). |
 | `-p 4665/udp` | ED2K global search UDP port (`AMULE_PORT` +3) (must be open to Internet). |
 | `-p 4672/udp` | ED2K UDP port (must match `AMULE_UDP_PORT`, must be open to Internet). |
 | `-e PUID=1000` | for UserID - see below for explanation. |
@@ -210,6 +214,7 @@ To get a High ID, all of the following must be true:
 
 1. **Port forwarding on your router**: Forward the ED2K ports from the internet to your Docker host's IP:
    * `AMULE_PORT` TCP (default: 4662)
+   * `AMULE_PORT` UDP (default: 4662) — needed by Emulerr
    * `AMULE_PORT + 3` UDP (default: 4665) — ED2K global search
    * `AMULE_UDP_PORT` UDP (default: 4672) — ED2K/Kad
 
@@ -222,6 +227,7 @@ To get a High ID, all of the following must be true:
      - AMULE_UDP_PORT=4672
    ports:
      - "4662:4662"       # ED2K TCP (AMULE_PORT)
+     - "4662:4662/udp"   # ED2K UDP (AMULE_PORT, needed by Emulerr)
      - "4665:4665/udp"   # ED2K global search (AMULE_PORT + 3)
      - "4672:4672/udp"   # ED2K/Kad UDP (AMULE_UDP_PORT)
    ```
@@ -232,6 +238,7 @@ To get a High ID, all of the following must be true:
      - AMULE_UDP_PORT=4672
    ports:
      - "5000:5000"       # ED2K TCP (AMULE_PORT)
+     - "5000:5000/udp"   # ED2K UDP (AMULE_PORT, needed by Emulerr)
      - "5003:5003/udp"   # ED2K global search (AMULE_PORT + 3)
      - "4672:4672/udp"   # ED2K/Kad UDP (AMULE_UDP_PORT)
    ```

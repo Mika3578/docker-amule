@@ -38,7 +38,7 @@ COPY entrypoint.sh /home/amule/entrypoint.sh
 
 WORKDIR /home/amule
 
-EXPOSE 4711/tcp 4712/tcp 4662/tcp 4665/udp 4672/udp
+EXPOSE 4711/tcp 4712/tcp 4662/tcp 4662/udp 4665/udp 4672/udp
 
 ENTRYPOINT ["/home/amule/entrypoint.sh"]
 
