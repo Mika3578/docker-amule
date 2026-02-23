@@ -247,3 +247,7 @@ To get a High ID, all of the following must be true:
 
 > [!NOTE]
 > UPnP does not work through Docker bridge networking. You must configure static port forwarding on your router manually.
+
+### Synology NAS with Orange Livebox
+
+For a complete step-by-step guide covering Synology Container Manager configuration, DSM Firewall rules, and Orange Livebox port forwarding, see **[Synology NAS Setup Guide](doc/SYNOLOGY_SETUP.md)**.
